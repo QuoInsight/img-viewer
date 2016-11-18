@@ -28,14 +28,10 @@ namespace myNameSpace {
           PictureBox picBox1 = new PictureBox();
           picBox1.Dock = DockStyle.Fill;
           picBox1.SizeMode = PictureBoxSizeMode.Zoom; // PictureBoxSizeMode.StretchImage;
-          //picBox1.Anchor = AnchorStyles.Left | AnchorStyles.Bottom;
-  /*
-          //GifImage gifImg1 = new GifImage(".\\8-cell.gif");
-          //picBox1.Load(".\\8-cell.gif");
-  */
           try {
             picBox1.Image = System.Drawing.Image.FromFile(@".\8-cell.gif"); // [ https://msdn.microsoft.com/en-us/library/t94wdca5%28v=vs.110%29.aspx?f=255&MSPPError=-2147217396 ]
           } catch(Exception e) {
+            frmMain.BackColor = System.Drawing.Color.Black;
             MessageBox.Show("Error: " + e.Message, "Image.FromFile()");
           }
           //picBox1.Click += new EventHandler(frmMain.picBox1_Click);
@@ -65,13 +61,12 @@ namespace myNameSpace {
       openFileDialog1.ShowHelp = true; // [ http://stackoverflow.com/questions/6718148/windows-forms-gui-hangs-when-calling-openfiledialog-showdialog ]
       openFileDialog1.Filter = "Image Files|*.GIF;*.PNG;*.JPG;*.BMP|All files (*.*)|*.*";
       openFileDialog1.FilterIndex = 1;
-      // openFileDialog1.InitialDirectory = "B:\\";
-      // openFileDialog1.RestoreDirectory = true;
     
       if (openFileDialog1.ShowDialog() == DialogResult.OK) {
         try {
           picBox1.Image = System.Drawing.Image.FromFile(openFileDialog1.FileName);
         } catch(Exception ex) {
+          picBox1.FindForm().BackColor = System.Drawing.Color.Black; // picBox1.Parent;
           MessageBox.Show("Error: " + ex.Message + "\n" + openFileDialog1.FileName, "Image.FromFile()");
         }
       } else {
