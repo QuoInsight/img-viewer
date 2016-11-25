@@ -10,7 +10,10 @@ namespace myNameSpace {
   class myMainForm : Form {
 
     [STAThread] // [ http://stackoverflow.com/questions/135803/dragdrop-registration-did-not-succeed ]
-    static int Main() {
+    static int Main(string[] args) {
+      string imgFilePath=""; // = @".\8-cell.gif";
+      if (args.Length > 0) imgFilePath = args[0];
+
       // Instantiate the MainForm object
       myMainForm frmMain;
 
@@ -28,11 +31,15 @@ namespace myNameSpace {
           PictureBox picBox1 = new PictureBox();
           picBox1.Dock = DockStyle.Fill;
           picBox1.SizeMode = PictureBoxSizeMode.Zoom; // PictureBoxSizeMode.StretchImage;
-          try {
-            picBox1.Image = System.Drawing.Image.FromFile(@".\8-cell.gif"); // [ https://msdn.microsoft.com/en-us/library/t94wdca5%28v=vs.110%29.aspx?f=255&MSPPError=-2147217396 ]
-          } catch(Exception e) {
+          if (imgFilePath=="") {
             frmMain.BackColor = System.Drawing.Color.Black;
-            MessageBox.Show("Error: " + e.Message, "Image.FromFile()");
+          } else {
+            try {
+              picBox1.Image = System.Drawing.Image.FromFile(imgFilePath); // [ https://msdn.microsoft.com/en-us/library/t94wdca5%28v=vs.110%29.aspx?f=255&MSPPError=-2147217396 ]
+            } catch(Exception e) {
+              frmMain.BackColor = System.Drawing.Color.Black;
+              MessageBox.Show("Error: " + e.Message, "Image.FromFile()");
+            }
           }
           //picBox1.Click += new EventHandler(frmMain.picBox1_Click);
           ((Control)picBox1).AllowDrop = true;
@@ -40,6 +47,12 @@ namespace myNameSpace {
           picBox1.DragEnter += new DragEventHandler(frmMain.onDragEnterEnableFileDrop);
           picBox1.DragDrop += new DragEventHandler(frmMain.picBox1_DragDrop);
           picBox1.MouseDown += new MouseEventHandler(frmMain.onMouseDownEnableMove);
+
+        ContextMenu cm = new ContextMenu();
+          MenuItem mi = new MenuItem("Close");
+          mi.Click += frmMain.menuItem_Click;
+          cm.MenuItems.Add(mi);
+          picBox1.ContextMenu = cm;
 
         frmMain.Controls.Add(picBox1);
 
@@ -76,6 +89,17 @@ namespace myNameSpace {
           // loop
           picBox1_Click(sender, e);
         }
+      }
+    }
+
+    void menuItem_Click(object sender, EventArgs e) {
+      var menuItemText = ((MenuItem)sender).Text;
+      if ( menuItemText=="Close" ) {
+        //if ( MessageBox.Show("Quit?", "msgTitle", MessageBoxButtons.OKCancel, MessageBoxIcon.Asterisk)==DialogResult.OK ) {
+          Application.Exit();
+        //}
+      } else {
+        MessageBox.Show(menuItemText, "menuItem_Click");
       }
     }
 
